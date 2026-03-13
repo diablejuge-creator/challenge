@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>$100 → $10,000 Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0b;
+    --surface: #111113;
+    --surface2: #18181c;
+    --border: #2a2a30;
+    --accent: #c8f135;
+    --accent2: #35f1c8;
+    --red: #f13565;
+    --orange: #f18535;
+    --text: #e8e8ec;
+    --muted: #5a5a6a;
+    --green: #35c865;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+  }
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+/* HEADER */
+header {
+background: var(–surface);
+border-bottom: 1px solid var(–border);
+padding: 24px 40px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+position: sticky;
+top: 0;
+z-index: 100;
+}
+.logo {
+font-size: 13px;
+font-weight: 700;
+letter-spacing: 0.04em;
+color: var(–muted);
+}
+.logo span { color: var(–accent); }
+.header-badge {
+background: var(–accent);
+color: #000;
+font-size: 11px;
+font-weight: 800;
+letter-spacing: 0.1em;
+padding: 4px 12px;
+text-transform: uppercase;
+}
+.header-status {
+font-size: 12px;
+color: var(–muted);
+font-family: ‘JetBrains Mono’, monospace;
+}
+
+/* NAV TABS */
+.tabs {
+display: flex;
+gap: 0;
+border-bottom: 1px solid var(–border);
+background: var(–surface);
+padding: 0 40px;
+overflow-x: auto;
+}
+.tab {
+padding: 14px 20px;
+font-size: 12px;
+font-weight: 700;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+cursor: pointer;
+color: var(–muted);
+border-bottom: 2px solid transparent;
+transition: all 0.2s;
+white-space: nowrap;
+}
+.tab:hover { color: var(–text); }
+.tab.active { color: var(–accent); border-bottom-color: var(–accent); }
+
+/* MAIN */
+main { padding: 40px; max-width: 1400px; margin: 0 auto; }
+.section { display: none; }
+.section.active { display: block; }
+
+/* OVERVIEW */
+.page-title {
+font-size: 42px;
+font-weight: 800;
+line-height: 1;
+margin-bottom: 6px;
+letter-spacing: -0.02em;
+}
+.page-title span { color: var(–accent); }
+.page-subtitle { color: var(–muted); font-size: 14px; margin-bottom: 40px; font-family: ‘JetBrains Mono’, monospace; }
+
+/* STATS GRID */
+.stats-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+gap: 1px;
+background: var(–border);
+border: 1px solid var(–border);
+margin-bottom: 40px;
+}
+.stat-card {
+background: var(–surface);
+padding: 24px;
+position: relative;
+overflow: hidden;
+}
+.stat-card::before {
+content: ‘’;
+position: absolute;
+top: 0; left: 0; right: 0;
+height: 2px;
+background: var(–accent);
+opacity: 0;
+transition: opacity 0.2s;
+}
+.stat-card:hover::before { opacity: 1; }
+.stat-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(–muted); margin-bottom: 8px; }
+.stat-value { font-size: 32px; font-weight: 800; line-height: 1; font-family: ‘JetBrains Mono’, monospace; }
+.stat-value.green { color: var(–green); }
+.stat-value.red { color: var(–red); }
+.stat-value.accent { color: var(–accent); }
+.stat-sub { font-size: 11px; color: var(–muted); margin-top: 6px; font-family: ‘JetBrains Mono’, monospace; }
+
+/* PROGRESS BAR */
+.progress-section {
+background: var(–surface);
+border: 1px solid var(–border);
+padding: 28px;
+margin-bottom: 32px;
+}
+.progress-header {
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+margin-bottom: 20px;
+}
+.progress-title { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.progress-pct { font-size: 28px; font-weight: 800; color: var(–accent); font-family: ‘JetBrains Mono’, monospace; }
+.progress-track { height: 8px; background: var(–surface2); border: 1px solid var(–border); overflow: hidden; margin-bottom: 12px; }
+.progress-fill { height: 100%; background: var(–accent); width: 0%; transition: width 1s ease; position: relative; }
+.progress-fill::after {
+content: ‘’;
+position: absolute;
+right: 0; top: 0; bottom: 0;
+width: 20px;
+background: linear-gradient(to right, transparent, rgba(200,241,53,0.6));
+}
+.phase-markers {
+display: flex;
+justify-content: space-between;
+font-size: 10px;
+color: var(–muted);
+font-family: ‘JetBrains Mono’, monospace;
+}
+.phase-marker { text-align: center; }
+.phase-marker.reached { color: var(–accent); }
+
+/* PHASES */
+.phases-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+gap: 16px;
+margin-bottom: 40px;
+}
+.phase-card {
+background: var(–surface);
+border: 1px solid var(–border);
+padding: 20px;
+position: relative;
+}
+.phase-card.active-phase { border-color: var(–accent); }
+.phase-card.completed { border-color: var(–green); opacity: 0.7; }
+.phase-num {
+font-size: 10px;
+font-weight: 700;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+color: var(–muted);
+margin-bottom: 8px;
+}
+.phase-range {
+font-size: 20px;
+font-weight: 800;
+color: var(–accent);
+font-family: ‘JetBrains Mono’, monospace;
+margin-bottom: 6px;
+}
+.phase-card.completed .phase-range { color: var(–green); }
+.phase-target { font-size: 12px; color: var(–muted); margin-bottom: 12px; }
+.phase-rules { list-style: none; }
+.phase-rules li {
+font-size: 12px;
+padding: 6px 0;
+border-top: 1px solid var(–border);
+color: var(–text);
+display: flex;
+gap: 8px;
+font-family: ‘JetBrains Mono’, monospace;
+}
+.phase-rules li .key { color: var(–muted); min-width: 100px; }
+.phase-badge {
+position: absolute;
+top: 12px; right: 12px;
+font-size: 9px;
+font-weight: 800;
+letter-spacing: 0.1em;
+padding: 3px 8px;
+text-transform: uppercase;
+}
+.badge-active { background: var(–accent); color: #000; }
+.badge-done { background: var(–green); color: #000; }
+.badge-locked { background: var(–surface2); color: var(–muted); border: 1px solid var(–border); }
+
+/* TRADE LOG */
+.section-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 24px;
+}
+.section-title { font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
+.btn {
+font-size: 11px;
+font-weight: 700;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+padding: 8px 16px;
+cursor: pointer;
+border: none;
+transition: all 0.15s;
+}
+.btn-accent { background: var(–accent); color: #000; }
+.btn-accent:hover { background: #d4f53f; }
+.btn-ghost { background: transparent; color: var(–muted); border: 1px solid var(–border); }
+.btn-ghost:hover { color: var(–text); border-color: var(–text); }
+.lev-btn { background: var(–surface2); color: var(–muted); border: 1px solid var(–border); font-size:12px; padding:6px 14px; }
+.lev-btn:hover { color: var(–text); border-color: var(–text); }
+.lev-btn.active-lev { background: var(–accent); color: #000; border-color: var(–accent); }
+
+table {
+width: 100%;
+border-collapse: collapse;
+font-size: 13px;
+}
+thead tr {
+border-bottom: 2px solid var(–accent);
+}
+th {
+text-align: left;
+padding: 10px 14px;
+font-size: 10px;
+font-weight: 700;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+color: var(–muted);
+font-family: ‘JetBrains Mono’, monospace;
+}
+td {
+padding: 12px 14px;
+border-bottom: 1px solid var(–border);
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 12px;
+}
+tr:hover td { background: var(–surface2); }
+.tag {
+display: inline-block;
+font-size: 10px;
+font-weight: 700;
+padding: 2px 8px;
+letter-spacing: 0.06em;
+text-transform: uppercase;
+}
+.tag-long { background: rgba(53,200,101,0.15); color: var(–green); }
+.tag-short { background: rgba(241,53,101,0.15); color: var(–red); }
+.tag-win { background: rgba(53,200,101,0.15); color: var(–green); }
+.tag-loss { background: rgba(241,53,101,0.15); color: var(–red); }
+.tag-be { background: rgba(90,90,106,0.3); color: var(–muted); }
+.pnl-pos { color: var(–green); font-weight: 700; }
+.pnl-neg { color: var(–red); font-weight: 700; }
+
+/* RISK RULES */
+.rules-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+gap: 16px;
+margin-bottom: 32px;
+}
+.rule-card {
+background: var(–surface);
+border: 1px solid var(–border);
+padding: 20px;
+}
+.rule-card-title {
+font-size: 11px;
+font-weight: 700;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+color: var(–accent);
+margin-bottom: 14px;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.rule-card-title::before {
+content: ‘’;
+width: 12px; height: 2px;
+background: var(–accent);
+}
+.rule-item {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 10px 0;
+border-bottom: 1px solid var(–border);
+font-size: 13px;
+}
+.rule-item:last-child { border-bottom: none; }
+.rule-key { color: var(–muted); font-size: 12px; }
+.rule-val { font-family: ‘JetBrains Mono’, monospace; font-weight: 700; font-size: 13px; }
+.rule-val.highlight { color: var(–accent); }
+.rule-val.danger { color: var(–red); }
+
+/* CHECKLIST */
+.checklist {
+background: var(–surface);
+border: 1px solid var(–border);
+padding: 24px;
+margin-bottom: 24px;
+}
+.checklist-title {
+font-size: 11px;
+font-weight: 700;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+color: var(–muted);
+margin-bottom: 16px;
+}
+.check-item {
+display: flex;
+align-items: flex-start;
+gap: 12px;
+padding: 8px 0;
+cursor: pointer;
+font-size: 13px;
+border-bottom: 1px solid rgba(42,42,48,0.5);
+}
+.check-item:last-child { border-bottom: none; }
+.check-box {
+width: 16px;
+height: 16px;
+border: 1.5px solid var(–border);
+flex-shrink: 0;
+margin-top: 1px;
+position: relative;
+transition: all 0.15s;
+}
+.check-box.checked { border-color: var(–accent); background: var(–accent); }
+.check-box.checked::after {
+content: ‘✓’;
+position: absolute;
+top: -1px; left: 1px;
+font-size: 12px;
+color: #000;
+font-weight: 800;
+}
+.check-text { flex: 1; line-height: 1.5; }
+.check-text.checked { color: var(–muted); text-decoration: line-through; }
+
+/* JOURNAL */
+.journal-entry {
+background: var(–surface);
+border: 1px solid var(–border);
+border-left: 3px solid var(–accent);
+padding: 20px 24px;
+margin-bottom: 12px;
+}
+.journal-date {
+font-size: 10px;
+font-weight: 700;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+color: var(–muted);
+font-family: ‘JetBrains Mono’, monospace;
+margin-bottom: 8px;
+}
+.journal-balance {
+font-size: 22px;
+font-weight: 800;
+color: var(–accent);
+font-family: ‘JetBrains Mono’, monospace;
+margin-bottom: 8px;
+}
+.journal-note { font-size: 13px; color: var(–text); line-height: 1.6; }
+.journal-tags { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+
+/* RESOURCES */
+.resource-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+gap: 16px;
+}
+.resource-card {
+background: var(–surface);
+border: 1px solid var(–border);
+padding: 20px;
+transition: border-color 0.2s;
+}
+.resource-card:hover { border-color: var(–accent); }
+.resource-type {
+font-size: 9px;
+font-weight: 700;
+letter-spacing: 0.12em;
+text-transform: uppercase;
+color: var(–muted);
+margin-bottom: 8px;
+}
+.resource-name { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.resource-desc { font-size: 12px; color: var(–muted); line-height: 1.5; }
+.resource-tag {
+display: inline-block;
+font-size: 10px;
+font-weight: 700;
+padding: 2px 8px;
+margin-top: 10px;
+background: var(–surface2);
+color: var(–muted);
+border: 1px solid var(–border);
+text-transform: uppercase;
+letter-spacing: 0.06em;
+}
+
+/* ADD TRADE FORM */
+.form-grid {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+gap: 12px;
+margin-bottom: 16px;
+}
+.form-field { display: flex; flex-direction: column; gap: 6px; }
+.form-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(–muted); }
+.form-input, .form-select {
+background: var(–surface2);
+border: 1px solid var(–border);
+color: var(–text);
+padding: 8px 12px;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 13px;
+outline: none;
+transition: border-color 0.15s;
+}
+.form-input:focus, .form-select:focus { border-color: var(–accent); }
+.form-select option { background: var(–surface2); }
+.form-textarea {
+background: var(–surface2);
+border: 1px solid var(–border);
+color: var(–text);
+padding: 10px 12px;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 13px;
+outline: none;
+resize: vertical;
+min-height: 80px;
+width: 100%;
+transition: border-color 0.15s;
+}
+.form-textarea:focus { border-color: var(–accent); }
+
+/* EQUITY CHART */
+.chart-container {
+background: var(–surface);
+border: 1px solid var(–border);
+padding: 24px;
+margin-bottom: 32px;
+position: relative;
+}
+canvas { max-width: 100%; display: block; }
+
+/* MOTIVATION BAR */
+.motivation {
+background: var(–surface2);
+border-top: 1px solid var(–border);
+padding: 12px 40px;
+font-size: 11px;
+color: var(–muted);
+font-family: ‘JetBrains Mono’, monospace;
+display: flex;
+gap: 40px;
+overflow-x: auto;
+}
+.motivation span { white-space: nowrap; }
+.motivation .hl { color: var(–accent); }
+
+/* SCROLL */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(–bg); }
+::-webkit-scrollbar-thumb { background: var(–border); }
+
+@media (max-width: 700px) {
+main { padding: 20px; }
+.tabs { padding: 0 20px; }
+header { padding: 16px 20px; }
+.page-title { font-size: 28px; }
+}
+</style>
+
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div class="logo"><span>@bountar</span> $100 — $10,000 challenge</div>
+    <div style="background:var(--surface2);border:1px solid var(--border);color:var(--accent);font-size:11px;font-weight:800;letter-spacing:0.1em;padding:3px 10px;font-family:'JetBrains Mono',monospace;">×100</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div class="header-badge">Live</div>
+    <div class="header-status mono" id="live-date">— / — / —</div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <div class="tab active" onclick="showTab('overview')">📊 Обзор</div>
+  <div class="tab" onclick="showTab('phases')">🎯 Фазы</div>
+  <div class="tab" onclick="showTab('trades')">📋 Трейды</div>
+  <div class="tab" onclick="showTab('risk')">⚡ Риск-менеджмент</div>
+  <div class="tab" onclick="showTab('journal')">📝 Журнал</div>
+  <div class="tab" onclick="showTab('checklist')">✅ Чеклисты</div>
+  <div class="tab" onclick="showTab('resources')">📚 Ресурсы</div>
+</nav>
+
+<!-- ═══════════════════════════════ OVERVIEW ═══════════════════════════════ -->
+
+<main>
+<section class="section active" id="overview">
+  <div class="page-title">$100 → <span>$10,000</span></div>
+  <div class="page-subtitle mono">// FUTURES CHALLENGE · START DATE: <span id="start-label">—</span> · DAY <span id="day-counter">0</span></div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Текущий баланс</div>
+      <div class="stat-value accent mono" id="current-balance">$100.00</div>
+      <div class="stat-sub">Стартовый: $100.00</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Прирост</div>
+      <div class="stat-value green mono" id="total-gain">+$0.00</div>
+      <div class="stat-sub" id="total-pct">0.00%</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">До цели</div>
+      <div class="stat-value mono" id="to-goal">$9,900.00</div>
+      <div class="stat-sub">Цель: $10,000</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Всего сделок</div>
+      <div class="stat-value mono" id="total-trades">0</div>
+      <div class="stat-sub" id="win-rate">Win rate: —</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Лучший трейд</div>
+      <div class="stat-value green mono" id="best-trade">—</div>
+      <div class="stat-sub">Макс. выигрыш</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Макс. просадка</div>
+      <div class="stat-value red mono" id="max-dd">0%</div>
+      <div class="stat-sub">Лимит: 10%</div>
+    </div>
+  </div>
+
+  <div class="progress-section">
+    <div class="progress-header">
+      <div>
+        <div class="progress-title">Прогресс к цели $10,000</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;font-family:JetBrains Mono">Текущая фаза: <span id="current-phase-label" style="color:var(--accent)">Фаза 1</span></div>
+      </div>
+      <div class="progress-pct mono" id="progress-pct">1.0%</div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:1%"></div>
+    </div>
+    <div class="phase-markers">
+      <div class="phase-marker reached"><div>$100</div><div>Старт</div></div>
+      <div class="phase-marker" id="pm1"><div>$200</div><div>Ф1</div></div>
+      <div class="phase-marker" id="pm2"><div>$500</div><div>Ф2</div></div>
+      <div class="phase-marker" id="pm3"><div>$1,000</div><div>Ф3</div></div>
+      <div class="phase-marker" id="pm4"><div>$2,500</div><div>Ф4</div></div>
+      <div class="phase-marker" id="pm5"><div>$5,000</div><div>Ф5</div></div>
+      <div class="phase-marker" id="pm6"><div>$10,000</div><div>🎯</div></div>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Equity Curve</div>
+    <canvas id="equityChart" height="180"></canvas>
+  </div>
+
+  <!-- LEVERAGE BLOCK -->
+
+  <div style="background:var(--surface);border:1px solid var(--border);padding:24px;margin-bottom:24px;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px;">⚡ Калькулятор позиции</div>
+
+```
+<!-- Row 1: inputs -->
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:16px;">
+  <div class="form-field">
+    <label class="form-label">Плечо</label>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <input class="form-input" type="number" id="lev-input" value="100" min="1" max="125" style="flex:1;" oninput="setLeverageFromInput()">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:800;color:var(--accent);" id="lev-display">×</span>
+    </div>
+  </div>
+  <div class="form-field">
+    <label class="form-label">Баланс ($)</label>
+    <input class="form-input" type="number" id="calc-bal2" value="100" step="0.01" oninput="recalcRisk()">
+  </div>
+  <div class="form-field">
+    <label class="form-label">Риск на сделку (%)</label>
+    <input class="form-input" type="number" id="lev-risk-pct" value="1.5" step="0.1" min="0.1" max="100" oninput="recalcRisk()">
+  </div>
+  <div class="form-field">
+    <label class="form-label">Стоп-лосс (%)</label>
+    <input class="form-input" type="number" id="lev-sl-pct" value="1" step="0.1" min="0.01" oninput="recalcRisk()">
+  </div>
+  <div class="form-field">
+    <label class="form-label">R:R</label>
+    <input class="form-input" type="number" id="lev-rr" value="2" step="0.5" min="0.5" placeholder="напр. 3" oninput="recalcRisk()">
+  </div>
+</div>
+
+<!-- Quick leverage buttons -->
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;">
+  <span style="font-size:10px;color:var(--muted);align-self:center;letter-spacing:0.08em;text-transform:uppercase;font-weight:700;">Быстро:</span>
+  <button class="btn lev-btn" data-lev="10" onclick="quickLev(10)">10x</button>
+  <button class="btn lev-btn" data-lev="20" onclick="quickLev(20)">20x</button>
+  <button class="btn lev-btn" data-lev="25" onclick="quickLev(25)">25x</button>
+  <button class="btn lev-btn" data-lev="50" onclick="quickLev(50)">50x</button>
+  <button class="btn lev-btn" data-lev="75" onclick="quickLev(75)">75x</button>
+  <button class="btn lev-btn active-lev" data-lev="100" onclick="quickLev(100)">100x</button>
+</div>
+
+<!-- Results grid -->
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:12px;">
+  <div style="background:var(--surface2);padding:14px 16px;">
+    <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;">Риск ($)</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:800;color:var(--red);" id="r-dollar">$1.50</div>
+    <div style="font-size:10px;color:var(--muted);margin-top:3px;" id="r-dollar-sub">макс. лосс</div>
+  </div>
+  <div style="background:var(--surface2);padding:14px 16px;">
+    <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;">Маржа (залог)</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:800;color:var(--accent);" id="r-margin">$1.50</div>
+    <div style="font-size:10px;color:var(--muted);margin-top:3px;" id="r-margin-sub">сумма в открытие</div>
+  </div>
+  <div style="background:var(--surface2);padding:14px 16px;">
+    <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;">Объём позиции</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:800;color:var(--text);" id="r-position">$150</div>
+    <div style="font-size:10px;color:var(--muted);margin-top:3px;">маржа × плечо</div>
+  </div>
+  <div style="background:var(--surface2);padding:14px 16px;">
+    <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;">Тейк-профит ($)</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:800;color:var(--green);" id="r-tp">$3.00</div>
+    <div style="font-size:10px;color:var(--muted);margin-top:3px;" id="r-tp-sub">при R:R 2</div>
+  </div>
+  <div style="background:var(--surface2);padding:14px 16px;">
+    <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;">Ликвидация (от входа)</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:800;color:var(--orange);" id="r-liq">-1.00%</div>
+    <div style="font-size:10px;color:var(--muted);margin-top:3px;">≈100% / плечо</div>
+  </div>
+  <div style="background:var(--surface2);padding:14px 16px;">
+    <div style="font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;">Дневной лимит</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:800;color:var(--red);" id="r-daily">$5.00</div>
+    <div style="font-size:10px;color:var(--muted);margin-top:3px;" id="r-max-trades">макс. 3 сделки</div>
+  </div>
+</div>
+
+<div style="font-size:11px;color:var(--orange);font-family:'JetBrains Mono',monospace;" id="lev-warning"></div>
+```
+
+  </div>
+
+  <div style="background:var(--surface);border:1px solid var(--border);padding:24px;margin-bottom:24px;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">⚡ Быстрый ввод баланса</div>
+    <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+      <div class="form-field" style="flex:1;min-width:160px;">
+        <label class="form-label">Новый баланс ($)</label>
+        <input class="form-input" type="number" id="quick-balance" placeholder="напр. 142.50" step="0.01">
+      </div>
+      <div class="form-field" style="flex:2;min-width:200px;">
+        <label class="form-label">Заметка</label>
+        <input class="form-input" type="text" id="quick-note" placeholder="Что произошло сегодня">
+      </div>
+      <button class="btn btn-accent" onclick="updateBalance()" style="height:38px;margin-bottom:0px;">Обновить</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ PHASES ═══════════════════════════════ -->
+
+<section class="section" id="phases">
+  <div class="page-title">Фазы <span>Челленджа</span></div>
+  <div class="page-subtitle mono">// 6 фаз · FTMO-style · скейл риска</div>
+
+  <div class="phases-grid">
+    <div class="phase-card active-phase">
+      <div class="phase-badge badge-active">Активна</div>
+      <div class="phase-num">Фаза 1</div>
+      <div class="phase-range">$100 → $200</div>
+      <div class="phase-target">Цель: 2x депозит. Proof of concept.</div>
+      <ul class="phase-rules">
+        <li><span class="key">Риск/сделка</span> <span>1–2% ($1–2)</span></li>
+        <li><span class="key">Макс. лосс/день</span> <span>$5 (5%)</span></li>
+        <li><span class="key">R:R минимум</span> <span>1:2</span></li>
+        <li><span class="key">Макс. сделок/день</span> <span>3</span></li>
+        <li><span class="key">Плечо</span> <span>5–10x</span></li>
+        <li><span class="key">Стратегия</span> <span>Скальп / 1–5m</span></li>
+      </ul>
+    </div>
+    <div class="phase-card">
+      <div class="phase-badge badge-locked">Заблок.</div>
+      <div class="phase-num">Фаза 2</div>
+      <div class="phase-range">$200 → $500</div>
+      <div class="phase-target">Цель: 2.5x. Доказать повторяемость.</div>
+      <ul class="phase-rules">
+        <li><span class="key">Риск/сделка</span> <span>1.5% (~$3–5)</span></li>
+        <li><span class="key">Макс. лосс/день</span> <span>$12 (5%)</span></li>
+        <li><span class="key">R:R минимум</span> <span>1:2</span></li>
+        <li><span class="key">Макс. сделок/день</span> <span>4</span></li>
+        <li><span class="key">Плечо</span> <span>5–10x</span></li>
+        <li><span class="key">Стратегия</span> <span>Скальп / Свинг</span></li>
+      </ul>
+    </div>
+    <div class="phase-card">
+      <div class="phase-badge badge-locked">Заблок.</div>
+      <div class="phase-num">Фаза 3</div>
+      <div class="phase-range">$500 → $1,000</div>
+      <div class="phase-target">Цель: 2x. Дисциплина важнее всего.</div>
+      <ul class="phase-rules">
+        <li><span class="key">Риск/сделка</span> <span>1.5% (~$7–10)</span></li>
+        <li><span class="key">Макс. лосс/день</span> <span>$25 (5%)</span></li>
+        <li><span class="key">R:R минимум</span> <span>1:2.5</span></li>
+        <li><span class="key">Макс. сделок/день</span> <span>4</span></li>
+        <li><span class="key">Плечо</span> <span>5–8x</span></li>
+        <li><span class="key">Стратегия</span> <span>Свинг / 15m–1h</span></li>
+      </ul>
+    </div>
+    <div class="phase-card">
+      <div class="phase-badge badge-locked">Заблок.</div>
+      <div class="phase-num">Фаза 4</div>
+      <div class="phase-range">$1,000 → $2,500</div>
+      <div class="phase-target">Цель: 2.5x. Психология под давлением.</div>
+      <ul class="phase-rules">
+        <li><span class="key">Риск/сделка</span> <span>1% (~$10–15)</span></li>
+        <li><span class="key">Макс. лосс/день</span> <span>$50 (4%)</span></li>
+        <li><span class="key">R:R минимум</span> <span>1:2.5</span></li>
+        <li><span class="key">Макс. сделок/день</span> <span>3</span></li>
+        <li><span class="key">Плечо</span> <span>3–5x</span></li>
+        <li><span class="key">Стратегия</span> <span>Свинг / 1h–4h</span></li>
+      </ul>
+    </div>
+    <div class="phase-card">
+      <div class="phase-badge badge-locked">Заблок.</div>
+      <div class="phase-num">Фаза 5</div>
+      <div class="phase-range">$2,500 → $5,000</div>
+      <div class="phase-target">Цель: 2x. Сохранить прибыль.</div>
+      <ul class="phase-rules">
+        <li><span class="key">Риск/сделка</span> <span>1% (~$25–35)</span></li>
+        <li><span class="key">Макс. лосс/день</span> <span>$100 (4%)</span></li>
+        <li><span class="key">R:R минимум</span> <span>1:3</span></li>
+        <li><span class="key">Макс. сделок/день</span> <span>3</span></li>
+        <li><span class="key">Плечо</span> <span>2–4x</span></li>
+        <li><span class="key">Стратегия</span> <span>Свинг / 4h–1D</span></li>
+      </ul>
+    </div>
+    <div class="phase-card">
+      <div class="phase-badge badge-locked">Заблок.</div>
+      <div class="phase-num">Фаза 6</div>
+      <div class="phase-range">$5,000 → $10,000</div>
+      <div class="phase-target">Финальная фаза. Без ошибок.</div>
+      <ul class="phase-rules">
+        <li><span class="key">Риск/сделка</span> <span>0.75% (~$37–60)</span></li>
+        <li><span class="key">Макс. лосс/день</span> <span>$150 (3%)</span></li>
+        <li><span class="key">R:R минимум</span> <span>1:3</span></li>
+        <li><span class="key">Макс. сделок/день</span> <span>2–3</span></li>
+        <li><span class="key">Плечо</span> <span>2–3x</span></li>
+        <li><span class="key">Стратегия</span> <span>Свинг / 4h–1D</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--orange);padding:20px;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--orange);margin-bottom:10px;">⚠️ Правила перехода между фазами</div>
+    <div style="font-size:13px;color:var(--text);line-height:1.8;font-family:'JetBrains Mono',monospace;">
+      1. Достичь целевого баланса фазы.<br>
+      2. Не иметь активного дневного лимита потерь (лосс &lt; X% сегодня).<br>
+      3. Win rate за последние 10 трейдов ≥ 50%.<br>
+      4. Ни одного revenge trade за последние 5 дней.<br>
+      5. Написать запись в журнале: "почему я готов перейти в следующую фазу".
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ TRADES ═══════════════════════════════ -->
+
+<section class="section" id="trades">
+  <div class="section-header">
+    <div>
+      <div class="page-title">Лог <span>Трейдов</span></div>
+      <div class="page-subtitle mono">// Все позиции · PnL · Заметки</div>
+    </div>
+    <button class="btn btn-accent" onclick="toggleAddForm()">+ Добавить трейд</button>
+  </div>
+
+  <div id="add-form" style="display:none;background:var(--surface);border:1px solid var(--accent);padding:24px;margin-bottom:24px;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px;">Новая запись</div>
+    <div class="form-grid">
+      <div class="form-field">
+        <label class="form-label">Дата</label>
+        <input class="form-input" type="date" id="t-date">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Инструмент</label>
+        <input class="form-input" type="text" id="t-symbol" placeholder="BTC/USDT, ETH...">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Направление</label>
+        <select class="form-select" id="t-dir">
+          <option>Long</option>
+          <option>Short</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Вход ($)</label>
+        <input class="form-input" type="number" id="t-entry" step="0.01" placeholder="0.00">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Выход ($)</label>
+        <input class="form-input" type="number" id="t-exit" step="0.01" placeholder="0.00">
+      </div>
+      <div class="form-field">
+        <label class="form-label">PnL ($)</label>
+        <input class="form-input" type="number" id="t-pnl" step="0.01" placeholder="+/- 0.00">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Баланс после ($)</label>
+        <input class="form-input" type="number" id="t-bal" step="0.01" placeholder="0.00">
+      </div>
+      <div class="form-field">
+        <label class="form-label">R:R</label>
+        <input class="form-input" type="text" id="t-rr" placeholder="1:2">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Стратегия</label>
+        <input class="form-input" type="text" id="t-strat" placeholder="Breakout, EMA...">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Эмоции (1–5)</label>
+        <select class="form-select" id="t-emotion">
+          <option value="5">5 — Спокойно, по плану</option>
+          <option value="4">4 — Хорошо</option>
+          <option value="3">3 — Нормально</option>
+          <option value="2">2 — Нервничал</option>
+          <option value="1">1 — Revenge / FOMO</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-field" style="margin-bottom:16px;">
+      <label class="form-label">Заметка</label>
+      <textarea class="form-textarea" id="t-note" placeholder="Почему зашёл? Что не так? Что сделал правильно?"></textarea>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-accent" onclick="addTrade()">Сохранить</button>
+      <button class="btn btn-ghost" onclick="toggleAddForm()">Отмена</button>
+    </div>
+  </div>
+
+  <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Дата</th>
+          <th>Символ</th>
+          <th>Dir</th>
+          <th>Вход</th>
+          <th>Выход</th>
+          <th>PnL</th>
+          <th>Баланс</th>
+          <th>R:R</th>
+          <th>Стратегия</th>
+          <th>🧠</th>
+          <th>Результат</th>
+        </tr>
+      </thead>
+      <tbody id="trades-tbody">
+        <tr>
+          <td colspan="12" style="text-align:center;color:var(--muted);padding:40px;">Трейдов пока нет. Добавьте первый!</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top:24px;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;">
+    <div style="background:var(--surface);border:1px solid var(--border);padding:16px;">
+      <div class="stat-label">Avg Win</div>
+      <div class="stat-value green mono" id="avg-win" style="font-size:22px;">—</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);padding:16px;">
+      <div class="stat-label">Avg Loss</div>
+      <div class="stat-value red mono" id="avg-loss" style="font-size:22px;">—</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);padding:16px;">
+      <div class="stat-label">Profit Factor</div>
+      <div class="stat-value accent mono" id="profit-factor" style="font-size:22px;">—</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);padding:16px;">
+      <div class="stat-label">Expectancy</div>
+      <div class="stat-value mono" id="expectancy" style="font-size:22px;">—</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ RISK ═══════════════════════════════ -->
+
+<section class="section" id="risk">
+  <div class="page-title">Риск-<span>менеджмент</span></div>
+  <div class="page-subtitle mono">// Правила · Лимиты · Психология</div>
+
+  <div class="rules-grid">
+    <div class="rule-card">
+      <div class="rule-card-title">Золотые правила</div>
+      <div class="rule-item"><span class="rule-key">Макс. риск на трейд</span><span class="rule-val highlight">1–2% депозита</span></div>
+      <div class="rule-item"><span class="rule-key">Дневной стоп-лосс</span><span class="rule-val danger">5% от депозита</span></div>
+      <div class="rule-item"><span class="rule-key">Недельный макс. дродаун</span><span class="rule-val danger">10%</span></div>
+      <div class="rule-item"><span class="rule-key">Минимальный R:R</span><span class="rule-val highlight">1:2</span></div>
+      <div class="rule-item"><span class="rule-key">Макс. открытых позиций</span><span class="rule-val">1 (иногда 2)</span></div>
+      <div class="rule-item"><span class="rule-key">Макс. сделок в день</span><span class="rule-val">3–4</span></div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-title">Запрещено</div>
+      <div class="rule-item"><span class="rule-key">Revenge trading</span><span class="rule-val danger">НИКОГДА</span></div>
+      <div class="rule-item"><span class="rule-key">FOMO-входы</span><span class="rule-val danger">НИКОГДА</span></div>
+      <div class="rule-item"><span class="rule-key">Торговля после 2+ лоссов</span><span class="rule-val danger">СТОП на день</span></div>
+      <div class="rule-item"><span class="rule-key">Убирать стоп-лосс</span><span class="rule-val danger">НИКОГДА</span></div>
+      <div class="rule-item"><span class="rule-key">Усредняться в убыток</span><span class="rule-val danger">НИКОГДА</span></div>
+      <div class="rule-item"><span class="rule-key">Торговля без сетапа</span><span class="rule-val danger">НИКОГДА</span></div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-title">Сайзинг по балансу</div>
+      <div class="rule-item"><span class="rule-key">Баланс $100–200</span><span class="rule-val highlight">$1–2 / трейд</span></div>
+      <div class="rule-item"><span class="rule-key">Баланс $200–500</span><span class="rule-val highlight">$3–7 / трейд</span></div>
+      <div class="rule-item"><span class="rule-key">Баланс $500–1k</span><span class="rule-val highlight">$7–15 / трейд</span></div>
+      <div class="rule-item"><span class="rule-key">Баланс $1k–2.5k</span><span class="rule-val highlight">$10–25 / трейд</span></div>
+      <div class="rule-item"><span class="rule-key">Баланс $2.5k–5k</span><span class="rule-val highlight">$25–50 / трейд</span></div>
+      <div class="rule-item"><span class="rule-key">Баланс $5k–10k</span><span class="rule-val highlight">$37–75 / трейд</span></div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-title">Триггеры паузы</div>
+      <div class="rule-item"><span class="rule-key">3 лосса подряд</span><span class="rule-val">Пауза 24ч</span></div>
+      <div class="rule-item"><span class="rule-key">Дневной лимит пробит</span><span class="rule-val">Стоп сегодня</span></div>
+      <div class="rule-item"><span class="rule-key">Торговал на эмоциях</span><span class="rule-val">Пауза 1–2 дня</span></div>
+      <div class="rule-item"><span class="rule-key">Просадка &gt;15% от пика</span><span class="rule-val danger">Пауза 1 неделя</span></div>
+      <div class="rule-item"><span class="rule-key">Пропустил стоп-лосс</span><span class="rule-val">Пауза 3 дня</span></div>
+      <div class="rule-item"><span class="rule-key">Нет сна / болею</span><span class="rule-val">Не торговать</span></div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-title">Расчёт позиции</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px;font-family:'JetBrains Mono',monospace;">Формула: Size = (Balance × Risk%) / SL_pts</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="form-field">
+          <label class="form-label">Баланс ($)</label>
+          <input class="form-input" type="number" id="calc-bal" value="100" step="1">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Риск (%)</label>
+          <input class="form-input" type="number" id="calc-risk" value="1.5" step="0.1">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Стоп (пункты)</label>
+          <input class="form-input" type="number" id="calc-sl" value="50" step="1">
+        </div>
+        <button class="btn btn-accent" onclick="calcPosition()">Рассчитать</button>
+        <div style="font-size:14px;color:var(--accent);font-family:'JetBrains Mono',monospace;font-weight:700;" id="calc-result">—</div>
+      </div>
+    </div>
+    <div class="rule-card">
+      <div class="rule-card-title">Психология и ритуалы</div>
+      <div class="rule-item"><span class="rule-key">До торговли</span><span class="rule-val">Обзор рынка 30мин</span></div>
+      <div class="rule-item"><span class="rule-key">После убытка</span><span class="rule-val">Запись + дышать</span></div>
+      <div class="rule-item"><span class="rule-key">После победы</span><span class="rule-val">Зафиксировать, не гнаться</span></div>
+      <div class="rule-item"><span class="rule-key">Мантра</span><span class="rule-val">Сохрани депозит</span></div>
+      <div class="rule-item"><span class="rule-key">Цель дня</span><span class="rule-val">+3–5%, не больше</span></div>
+      <div class="rule-item"><span class="rule-key">Ежедневный дедлайн</span><span class="rule-val">Закрыть все в 22:00</span></div>
+    </div>
+  </div>
+
+  <div style="background:var(--surface);border:1px solid var(--border);padding:24px;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Дорожная карта к $10k (compound math)</div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Фаза</th><th>Старт</th><th>Цель</th><th>Рост</th><th>Трейдов (est.)</th><th>Недель (est.)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>$100</td><td>$200</td><td class="pnl-pos">+100%</td><td>~20–30</td><td>~2–3</td></tr>
+          <tr><td>2</td><td>$200</td><td>$500</td><td class="pnl-pos">+150%</td><td>~30–40</td><td>~3–4</td></tr>
+          <tr><td>3</td><td>$500</td><td>$1,000</td><td class="pnl-pos">+100%</td><td>~20–30</td><td>~2–3</td></tr>
+          <tr><td>4</td><td>$1,000</td><td>$2,500</td><td class="pnl-pos">+150%</td><td>~30–40</td><td>~4–5</td></tr>
+          <tr><td>5</td><td>$2,500</td><td>$5,000</td><td class="pnl-pos">+100%</td><td>~30–40</td><td>~4–6</td></tr>
+          <tr><td>6</td><td>$5,000</td><td>$10,000</td><td class="pnl-pos">+100%</td><td>~40–50</td><td>~6–8</td></tr>
+          <tr style="background:var(--surface2);">
+            <td colspan="2" style="font-weight:700;color:var(--accent);">Итого</td>
+            <td style="font-weight:700;color:var(--accent);">$10,000</td>
+            <td class="pnl-pos" style="font-weight:700;">+9,900%</td>
+            <td>~170–230</td>
+            <td>~21–29</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ JOURNAL ═══════════════════════════════ -->
+
+<section class="section" id="journal">
+  <div class="section-header">
+    <div>
+      <div class="page-title">Торговый <span>Журнал</span></div>
+      <div class="page-subtitle mono">// Ежедневные записи · Рефлексия</div>
+    </div>
+    <button class="btn btn-accent" onclick="toggleJournalForm()">+ Новая запись</button>
+  </div>
+
+  <div id="journal-form" style="display:none;background:var(--surface);border:1px solid var(--accent);padding:24px;margin-bottom:24px;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px;">Новая запись журнала</div>
+    <div class="form-grid">
+      <div class="form-field">
+        <label class="form-label">Дата</label>
+        <input class="form-input" type="date" id="j-date">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Баланс ($)</label>
+        <input class="form-input" type="number" id="j-bal" placeholder="100.00" step="0.01">
+      </div>
+      <div class="form-field">
+        <label class="form-label">PnL дня ($)</label>
+        <input class="form-input" type="number" id="j-pnl" placeholder="+/- 0.00" step="0.01">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Настроение (1–5)</label>
+        <select class="form-select" id="j-mood">
+          <option value="5">5 🔥 Огонь</option>
+          <option value="4">4 😊 Хорошо</option>
+          <option value="3" selected>3 😐 Нейтрально</option>
+          <option value="2">2 😟 Плохо</option>
+          <option value="1">1 😤 Ужасно</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-field" style="margin-bottom:12px;">
+      <label class="form-label">Что произошло сегодня</label>
+      <textarea class="form-textarea" id="j-what" placeholder="Опишите трейды, решения, события рынка..."></textarea>
+    </div>
+    <div class="form-field" style="margin-bottom:12px;">
+      <label class="form-label">Что сделал правильно</label>
+      <textarea class="form-textarea" id="j-good" style="min-height:60px;" placeholder="Следовал плану, взял профит вовремя..."></textarea>
+    </div>
+    <div class="form-field" style="margin-bottom:12px;">
+      <label class="form-label">Что улучшить</label>
+      <textarea class="form-textarea" id="j-improve" style="min-height:60px;" placeholder="Зашёл рано, не дождался подтверждения..."></textarea>
+    </div>
+    <div class="form-field" style="margin-bottom:16px;">
+      <label class="form-label">Цель на завтра</label>
+      <input class="form-input" type="text" id="j-tomorrow" placeholder="Торговать только по A-сетапам, не превышать 2 трейда">
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-accent" onclick="addJournalEntry()">Сохранить</button>
+      <button class="btn btn-ghost" onclick="toggleJournalForm()">Отмена</button>
+    </div>
+  </div>
+
+  <div id="journal-entries">
+    <div style="text-align:center;color:var(--muted);padding:60px;font-size:13px;font-family:'JetBrains Mono',monospace;">
+      Записей пока нет. Начни вести журнал сегодня 📝
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ CHECKLIST ═══════════════════════════════ -->
+
+<section class="section" id="checklist">
+  <div class="page-title">Чеклисты <span>&amp; Правила</span></div>
+  <div class="page-subtitle mono">// Pre-trade · Post-trade · Еженедельный</div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;">
+
+```
+<div class="checklist">
+  <div class="checklist-title">✅ Pre-Trade чеклист (перед каждой сделкой)</div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Определил тренд на старшем таймфрейме (4h / 1D)</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Есть чёткий сетап (паттерн / сигнал)</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Стоп-лосс выставлен ДО входа</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">R:R не менее 1:2 (лучше 1:3)</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Размер позиции соответствует фазе (&lt;2% риска)</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Дневной лимит потерь не достигнут</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Нет важных новостей в ближайший час</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Я спокоен, не на эмоциях</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Это не FOMO — я ждал этот сетап</div>
+  </div>
+</div>
+
+<div class="checklist">
+  <div class="checklist-title">📋 Post-Trade чеклист (после закрытия)</div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Записал трейд в лог (символ, вход, выход, PnL)</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Сохранил скриншот сетапа</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Написал: почему зашёл и почему вышел</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Оценил качество решения (не только результат)</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Обновил баланс в трекере</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Если убыток — не открывать новый трейд 30 минут</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Не пытаюсь "отыграться"</div>
+  </div>
+</div>
+
+<div class="checklist">
+  <div class="checklist-title">📅 Утренний ритуал (до открытия рынка)</div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Посмотрел экономический календарь (новости дня)</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Обзор рынка: BTC/ETH на 4h и 1D</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Определил ключевые уровни поддержки/сопротивления</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Записал 1–2 потенциальных сетапа</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Напомнил себе о текущей фазе и её правилах</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Состояние: выспался, нет сильного стресса</div>
+  </div>
+</div>
+
+<div class="checklist">
+  <div class="checklist-title">🗓️ Еженедельный ревью</div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Посчитал итоговый PnL недели</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Win rate за неделю</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Нашёл 1 главную ошибку</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Нашёл 1 главное улучшение</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Обновил прогресс-бар и баланс</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Запостил обновление (если ведёшь публично)</div>
+  </div>
+  <div class="check-item" onclick="toggleCheck(this)">
+    <div class="check-box"></div>
+    <div class="check-text">Поставил цель на следующую неделю</div>
+  </div>
+</div>
+```
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ RESOURCES ═══════════════════════════════ -->
+
+<section class="section" id="resources">
+  <div class="page-title">Ресурсы <span>&amp; Референсы</span></div>
+  <div class="page-subtitle mono">// Инструменты · Обучение · Верификация</div>
+
+  <div style="margin-bottom:32px;">
+    <div style="font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Верификация и прозрачность</div>
+    <div class="resource-grid">
+      <div class="resource-card">
+        <div class="resource-type">Биржа</div>
+        <div class="resource-name">Bybit / OKX Stats Link</div>
+        <div class="resource-desc">Публичная ссылка на статистику аккаунта. Bybit: Профиль → Поделиться stats. OKX: Copy trading profile.</div>
+        <div class="resource-tag">Верификация</div>
+      </div>
+      <div class="resource-card">
+        <div class="resource-type">Трекинг</div>
+        <div class="resource-name">Coinstats / Debank</div>
+        <div class="resource-desc">Портфельные трекеры для верификации баланса. Показывай скриншоты с отметкой времени.</div>
+        <div class="resource-tag">Прозрачность</div>
+      </div>
+      <div class="resource-card">
+        <div class="resource-type">Документация</div>
+        <div class="resource-name">Notion / Google Sheets</div>
+        <div class="resource-desc">Публичный лог трейдов. Лучший вариант — Google Sheets с публичным доступом, обновлять ежедневно.</div>
+        <div class="resource-tag">Доверие</div>
+      </div>
+      <div class="resource-card">
+        <div class="resource-type">Запись</div>
+        <div class="resource-name">OBS Studio</div>
+        <div class="resource-desc">Бесплатный стриминг/запись. Вести live-сессии или записывать торговлю для YouTube / Telegram.</div>
+        <div class="resource-tag">Контент</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:32px;">
+    <div style="font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Успешные шаблоны для вдохновения</div>
+    <div class="resource-grid">
+      <div class="resource-card">
+        <div class="resource-type">Шаблон</div>
+        <div class="resource-name">Warrior Trading (Ross Cameron)</div>
+        <div class="resource-desc">$583 → $100k+ за 45 дней. Полная прозрачность: каждый трейд в live. Ежедневные обновления баланса.</div>
+        <div class="resource-tag">Day Trading</div>
+      </div>
+      <div class="resource-card">
+        <div class="resource-type">Шаблон</div>
+        <div class="resource-name">FTMO Challenge Format</div>
+        <div class="resource-desc">Phase 1: +8% / drawdown &lt;5%. Phase 2: +5%. Funded: 80–90% split. Адаптируй под свои правила фаз.</div>
+        <div class="resource-tag">Проп-Фирма</div>
+      </div>
+      <div class="resource-card">
+        <div class="resource-type">Шаблон</div>
+        <div class="resource-name">Reddit r/Daytrading $1k→$100k</div>
+        <div class="resource-desc">Ежедневные посты + таблица с трейдами. Win rate 60–70%, scaling risk по фазам. Честно показывали лоссы.</div>
+        <div class="resource-tag">Сообщество</div>
+      </div>
+      <div class="resource-card">
+        <div class="resource-type">Легенда</div>
+        <div class="resource-name">Larry Williams 1987</div>
+        <div class="resource-desc">$10k → $1.1M за год. Robbins World Cup. Фьючерсы, агрессивный риск &gt;10%. Цитируют как пример "возможного".</div>
+        <div class="resource-tag">История</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:32px;">
+    <div style="font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">Инструменты анализа</div>
+    <div class="resource-grid">
+      <div class="resource-card">
+        <div class="resource-type">Анализ</div>
+        <div class="resource-name">TradingView</div>
+        <div class="resource-desc">Основной инструмент. Публичные идеи, скриншоты с разметкой. Pro-план для алертов.</div>
+        <div class="resource-tag">Обязательно</div>
+      </div>
+      <div class="resource-card">
+        <div class="resource-type">Журнал</div>
+        <div class="resource-name">Edgewonk / TraderSync</div>
+        <div class="resource-desc">Профессиональные торговые журналы. Автоматически считают Win rate, Profit Factor, Expectancy.</div>
+        <div class="resource-tag">Статистика</div>
+      </div>
+      <div class="resource-card">
+        <div class="resource-type">Новости</div>
+        <div class="resource-name">CoinGlass / Coingecko</div>
+        <div class="resource-desc">Ликвидации, funding rate, open interest. Важно при торговле крипто-фьючерсами.</div>
+        <div class="resource-tag">Крипта</div>
+      </div>
+      <div class="resource-card">
+        <div class="resource-type">Экономика</div>
+        <div class="resource-name">Investing.com Calendar</div>
+        <div class="resource-desc">Экономический календарь. Проверяй каждое утро. Не торгуй в ±30 минут от красных событий.</div>
+        <div class="resource-tag">Обязательно</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--surface);border:1px solid var(--border);padding:24px;">
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:16px;">💡 Советы для публичного челленджа</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;font-size:13px;line-height:1.7;color:var(--text);">
+      <div>
+        <div style="color:var(--accent);font-weight:700;margin-bottom:6px;">Контент-стратегия</div>
+        Ежедневные обновления баланса. Показывай убытки — это +1000% доверия. Делай короткие видео (15–60 сек) с итогом дня. Ведь «моменты провала» — именно они вирусятся.
+      </div>
+      <div>
+        <div style="color:var(--accent);font-weight:700;margin-bottom:6px;">Форматы постов</div>
+        «День X: баланс $XXX → $XXX. Сделал 2 трейда: +$X / -$X. Главный урок дня». Добавляй скрин PnL. Используй хэштеги: #tradingchallenge #100to10k #futures.
+      </div>
+      <div>
+        <div style="color:var(--accent);font-weight:700;margin-bottom:6px;">Психология</div>
+        Процесс важнее результата. Сфокусируйся на качестве решений, а не на деньгах. 80% профессионалов говорят: первый $1k — самый сложный психологически. После $1k — становится легче.
+      </div>
+      <div>
+        <div style="color:var(--accent);font-weight:700;margin-bottom:6px;">Реалистичные ожидания</div>
+        60–80% таких челленджей заканчиваются сливом. Если ты в топ-20% — ты уже выиграл. Среднее время $100 → $10k у серьёзных трейдеров: 6–18 месяцев. Не торопись — не теряй.
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="motivation">
+  <span>💬 <span class="hl">"Preserving capital is the #1 job."</span> — Larry Hite</span>
+  <span>💬 <span class="hl">"The best trade is often no trade."</span></span>
+  <span>💬 <span class="hl">"Risk 1%, dream of 100%."</span></span>
+  <span>💬 <span class="hl">"Discipline > Intelligence in trading."</span></span>
+  <span>💬 <span class="hl">"Process over outcome, always."</span></span>
+</div>
+
+<script>
+// ═══════════════════════ STATE ═══════════════════════
+let state = {
+  balance: 100,
+  startDate: null,
+  trades: [],
+  journalEntries: [],
+  balanceHistory: [{date: new Date().toISOString().split('T')[0], balance: 100}]
+};
+
+// Load from localStorage is not supported, so we use in-memory state only
+// Initialize date
+function initDates() {
+  const today = new Date();
+  const dateStr = today.toLocaleDateString('ru-RU', {day:'2-digit',month:'2-digit',year:'numeric'});
+  document.getElementById('live-date').textContent = dateStr;
+  
+  if (!state.startDate) {
+    state.startDate = today.toISOString().split('T')[0];
+  }
+  document.getElementById('start-label').textContent = state.startDate;
+  
+  const start = new Date(state.startDate);
+  const diff = Math.floor((today - start) / (1000*60*60*24));
+  document.getElementById('day-counter').textContent = diff;
+  
+  // Set default dates in forms
+  const todayISO = today.toISOString().split('T')[0];
+  document.getElementById('t-date').value = todayISO;
+  document.getElementById('j-date').value = todayISO;
+}
+
+// ═══════════════════════ TABS ═══════════════════════
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ═══════════════════════ BALANCE & STATS ═══════════════════════
+function updateBalance() {
+  const newBal = parseFloat(document.getElementById('quick-balance').value);
+  const note = document.getElementById('quick-note').value;
+  if (!newBal || newBal <= 0) return;
+  
+  state.balance = newBal;
+  const today = new Date().toISOString().split('T')[0];
+  state.balanceHistory.push({date: today, balance: newBal, note: note});
+  
+  updateStats();
+  drawChart();
+  document.getElementById('quick-balance').value = '';
+  document.getElementById('quick-note').value = '';
+}
+
+function updateStats() {
+  const bal = state.balance;
+  const gain = bal - 100;
+  const pct = ((bal - 100) / 100 * 100).toFixed(2);
+  const toGoal = Math.max(0, 10000 - bal).toFixed(2);
+  const progress = Math.min(100, (bal / 10000 * 100));
+  
+  document.getElementById('current-balance').textContent = '$' + bal.toFixed(2);
+  document.getElementById('total-gain').textContent = (gain >= 0 ? '+$' : '-$') + Math.abs(gain).toFixed(2);
+  document.getElementById('total-pct').textContent = (pct >= 0 ? '+' : '') + pct + '%';
+  document.getElementById('to-goal').textContent = '$' + toGoal;
+  document.getElementById('progress-pct').textContent = progress.toFixed(1) + '%';
+  document.getElementById('progress-fill').style.width = progress + '%';
+  
+  // Phase detection
+  const phases = [
+    {min:0, max:200, label:'Фаза 1', pm:'pm1'},
+    {min:200, max:500, label:'Фаза 2', pm:'pm2'},
+    {min:500, max:1000, label:'Фаза 3', pm:'pm3'},
+    {min:1000, max:2500, label:'Фаза 4', pm:'pm4'},
+    {min:2500, max:5000, label:'Фаза 5', pm:'pm5'},
+    {min:5000, max:10000, label:'Фаза 6', pm:'pm6'},
+  ];
+  phases.forEach(p => {
+    const el = document.getElementById(p.pm);
+    if (el) el.classList.toggle('reached', bal >= p.min);
+  });
+  const currentPhase = phases.find(p => bal >= p.min && bal < p.max) || phases[phases.length-1];
+  document.getElementById('current-phase-label').textContent = currentPhase.label;
+  
+  // Trade stats
+  const trades = state.trades;
+  if (trades.length > 0) {
+    document.getElementById('total-trades').textContent = trades.length;
+    const wins = trades.filter(t => t.pnl > 0);
+    const losses = trades.filter(t => t.pnl < 0);
+    const wr = ((wins.length / trades.length) * 100).toFixed(0);
+    document.getElementById('win-rate').textContent = 'Win rate: ' + wr + '%';
+    
+    const maxPnl = Math.max(...trades.map(t => t.pnl));
+    document.getElementById('best-trade').textContent = '+$' + maxPnl.toFixed(2);
+    
+    if (wins.length > 0) document.getElementById('avg-win').textContent = '+$' + (wins.reduce((a,t)=>a+t.pnl,0)/wins.length).toFixed(2);
+    if (losses.length > 0) document.getElementById('avg-loss').textContent = '-$' + Math.abs(losses.reduce((a,t)=>a+t.pnl,0)/losses.length).toFixed(2);
+    
+    const totalGain = wins.reduce((a,t)=>a+t.pnl,0);
+    const totalLoss = Math.abs(losses.reduce((a,t)=>a+t.pnl,0));
+    if (totalLoss > 0) document.getElementById('profit-factor').textContent = (totalGain/totalLoss).toFixed(2);
+    
+    const expectancy = (totalGain + (totalLoss * -1)) / trades.length;
+    const expEl = document.getElementById('expectancy');
+    expEl.textContent = (expectancy >= 0 ? '+$' : '-$') + Math.abs(expectancy).toFixed(2);
+    expEl.className = 'stat-value mono ' + (expectancy >= 0 ? 'green' : 'red');
+    expEl.style.fontSize = '22px';
+    
+    // Max drawdown
+    let peak = 100, maxDD = 0;
+    state.balanceHistory.forEach(h => {
+      if (h.balance > peak) peak = h.balance;
+      const dd = (peak - h.balance) / peak * 100;
+      if (dd > maxDD) maxDD = dd;
+    });
+    document.getElementById('max-dd').textContent = maxDD.toFixed(1) + '%';
+  }
+}
+
+// ═══════════════════════ CHART ═══════════════════════
+function drawChart() {
+  const canvas = document.getElementById('equityChart');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.parentElement.clientWidth - 48;
+  canvas.height = 180;
+  
+  const data = state.balanceHistory;
+  if (data.length < 2) {
+    ctx.fillStyle = '#2a2a30';
+    ctx.font = '13px JetBrains Mono';
+    ctx.fillStyle = '#5a5a6a';
+    ctx.fillText('Обновите баланс для отображения графика', 20, 90);
+    return;
+  }
+  
+  const w = canvas.width, h = canvas.height;
+  const pad = {top:20, right:20, bottom:30, left:60};
+  const gw = w - pad.left - pad.right;
+  const gh = h - pad.top - pad.bottom;
+  
+  const vals = data.map(d => d.balance);
+  const minV = Math.min(...vals) * 0.95;
+  const maxV = Math.max(...vals) * 1.05;
+  
+  ctx.clearRect(0, 0, w, h);
+  
+  // Grid
+  ctx.strokeStyle = '#2a2a30';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (gh / 4) * i;
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + gw, y); ctx.stroke();
+    const val = maxV - (maxV - minV) * (i/4);
+    ctx.fillStyle = '#5a5a6a';
+    ctx.font = '10px JetBrains Mono';
+    ctx.fillText('$' + val.toFixed(0), 2, y + 4);
+  }
+  
+  // Area fill
+  const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + gh);
+  grad.addColorStop(0, 'rgba(200,241,53,0.2)');
+  grad.addColorStop(1, 'rgba(200,241,53,0)');
+  
+  ctx.beginPath();
+  data.forEach((d, i) => {
+    const x = pad.left + (i / (data.length - 1)) * gw;
+    const y = pad.top + gh - ((d.balance - minV) / (maxV - minV)) * gh;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  const lastX = pad.left + gw;
+  const lastY = pad.top + gh;
+  ctx.lineTo(lastX, lastY);
+  ctx.lineTo(pad.left, lastY);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+  
+  // Line
+  ctx.beginPath();
+  ctx.strokeStyle = '#c8f135';
+  ctx.lineWidth = 2;
+  data.forEach((d, i) => {
+    const x = pad.left + (i / (data.length - 1)) * gw;
+    const y = pad.top + gh - ((d.balance - minV) / (maxV - minV)) * gh;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+  
+  // Dots
+  data.forEach((d, i) => {
+    const x = pad.left + (i / (data.length - 1)) * gw;
+    const y = pad.top + gh - ((d.balance - minV) / (maxV - minV)) * gh;
+    ctx.beginPath();
+    ctx.arc(x, y, 3, 0, Math.PI * 2);
+    ctx.fillStyle = '#c8f135';
+    ctx.fill();
+  });
+}
+
+// ═══════════════════════ TRADES ═══════════════════════
+function toggleAddForm() {
+  const f = document.getElementById('add-form');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+
+function addTrade() {
+  const trade = {
+    id: Date.now(),
+    date: document.getElementById('t-date').value,
+    symbol: document.getElementById('t-symbol').value || '—',
+    dir: document.getElementById('t-dir').value,
+    entry: parseFloat(document.getElementById('t-entry').value) || 0,
+    exit: parseFloat(document.getElementById('t-exit').value) || 0,
+    pnl: parseFloat(document.getElementById('t-pnl').value) || 0,
+    balance: parseFloat(document.getElementById('t-bal').value) || state.balance,
+    rr: document.getElementById('t-rr').value || '—',
+    strategy: document.getElementById('t-strat').value || '—',
+    emotion: parseInt(document.getElementById('t-emotion').value),
+    note: document.getElementById('t-note').value
+  };
+  
+  state.trades.push(trade);
+  if (trade.balance > 0) {
+    state.balance = trade.balance;
+    state.balanceHistory.push({date: trade.date, balance: trade.balance});
+  }
+  
+  renderTrades();
+  updateStats();
+  drawChart();
+  
+  // Clear form
+  document.getElementById('t-symbol').value = '';
+  document.getElementById('t-pnl').value = '';
+  document.getElementById('t-entry').value = '';
+  document.getElementById('t-exit').value = '';
+  document.getElementById('t-bal').value = '';
+  document.getElementById('t-note').value = '';
+  document.getElementById('add-form').style.display = 'none';
+}
+
+function renderTrades() {
+  const tbody = document.getElementById('trades-tbody');
+  if (state.trades.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="12" style="text-align:center;color:var(--muted);padding:40px;">Трейдов пока нет.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = state.trades.slice().reverse().map((t, i) => {
+    const result = t.pnl > 0 ? 'win' : t.pnl < 0 ? 'loss' : 'be';
+    const resultLabel = t.pnl > 0 ? 'Win' : t.pnl < 0 ? 'Loss' : 'B/E';
+    const emotionEmoji = ['','😤','😟','😐','😊','🔥'][t.emotion] || '—';
+    return `<tr>
+      <td style="color:var(--muted)">${state.trades.length - i}</td>
+      <td>${t.date}</td>
+      <td style="font-weight:700">${t.symbol}</td>
+      <td><span class="tag tag-${t.dir.toLowerCase()}">${t.dir}</span></td>
+      <td>${t.entry || '—'}</td>
+      <td>${t.exit || '—'}</td>
+      <td class="${t.pnl >= 0 ? 'pnl-pos' : 'pnl-neg'}">${t.pnl >= 0 ? '+' : ''}${t.pnl.toFixed(2)}</td>
+      <td>$${t.balance.toFixed(2)}</td>
+      <td>${t.rr}</td>
+      <td style="color:var(--muted)">${t.strategy}</td>
+      <td>${emotionEmoji}</td>
+      <td><span class="tag tag-${result}">${resultLabel}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══════════════════════ JOURNAL ═══════════════════════
+function toggleJournalForm() {
+  const f = document.getElementById('journal-form');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+
+function addJournalEntry() {
+  const entry = {
+    id: Date.now(),
+    date: document.getElementById('j-date').value,
+    balance: parseFloat(document.getElementById('j-bal').value) || state.balance,
+    pnl: parseFloat(document.getElementById('j-pnl').value) || 0,
+    mood: parseInt(document.getElementById('j-mood').value),
+    what: document.getElementById('j-what').value,
+    good: document.getElementById('j-good').value,
+    improve: document.getElementById('j-improve').value,
+    tomorrow: document.getElementById('j-tomorrow').value
+  };
+  
+  state.journalEntries.unshift(entry);
+  renderJournal();
+  
+  document.getElementById('j-what').value = '';
+  document.getElementById('j-good').value = '';
+  document.getElementById('j-improve').value = '';
+  document.getElementById('j-tomorrow').value = '';
+  document.getElementById('journal-form').style.display = 'none';
+}
+
+function renderJournal() {
+  const container = document.getElementById('journal-entries');
+  if (state.journalEntries.length === 0) return;
+  
+  const moodEmoji = ['','😤','😟','😐','😊','🔥'];
+  container.innerHTML = state.journalEntries.map(e => `
+    <div class="journal-entry">
+      <div class="journal-date">${e.date} · ${moodEmoji[e.mood] || ''} Настроение: ${e.mood}/5</div>
+      <div class="journal-balance">$${e.balance.toFixed(2)} <span style="font-size:14px;color:${e.pnl>=0?'var(--green)':'var(--red)'};">${e.pnl>=0?'+':''}$${e.pnl.toFixed(2)}</span></div>
+      ${e.what ? `<div class="journal-note" style="margin-bottom:8px;"><strong style="color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:0.1em;">Что было</strong><br>${e.what}</div>` : ''}
+      ${e.good ? `<div class="journal-note" style="margin-bottom:8px;"><strong style="color:var(--green);font-size:10px;text-transform:uppercase;letter-spacing:0.1em;">✓ Что сделал правильно</strong><br>${e.good}</div>` : ''}
+      ${e.improve ? `<div class="journal-note" style="margin-bottom:8px;"><strong style="color:var(--orange);font-size:10px;text-transform:uppercase;letter-spacing:0.1em;">△ Что улучшить</strong><br>${e.improve}</div>` : ''}
+      ${e.tomorrow ? `<div class="journal-note"><strong style="color:var(--accent2);font-size:10px;text-transform:uppercase;letter-spacing:0.1em;">→ Цель на завтра</strong><br>${e.tomorrow}</div>` : ''}
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════ CHECKLIST ═══════════════════════
+function toggleCheck(item) {
+  const box = item.querySelector('.check-box');
+  const text = item.querySelector('.check-text');
+  box.classList.toggle('checked');
+  text.classList.toggle('checked');
+}
+
+// ═══════════════════════ CALCULATOR ═══════════════════════
+function calcPosition() {
+  const bal = parseFloat(document.getElementById('calc-bal').value) || 0;
+  const risk = parseFloat(document.getElementById('calc-risk').value) || 0;
+  const sl = parseFloat(document.getElementById('calc-sl').value) || 1;
+  const riskAmount = bal * risk / 100;
+  const size = riskAmount / sl;
+  document.getElementById('calc-result').innerHTML = 
+    `Риск: $${riskAmount.toFixed(2)}<br>Размер позиции: ${size.toFixed(4)} контракта`;
+}
+
+// ═══════════════════════ LEVERAGE ═══════════════════════
+let currentLeverage = 100;
+
+function setLeverageFromInput() {
+  const val = parseInt(document.getElementById('lev-input').value) || 1;
+  currentLeverage = val;
+  document.getElementById('lev-display').textContent = '×';
+  document.querySelectorAll('.lev-btn').forEach(b => {
+    b.classList.toggle('active-lev', parseInt(b.dataset.lev) === val);
+  });
+  recalcRisk();
+}
+
+function quickLev(lev) {
+  currentLeverage = lev;
+  document.getElementById('lev-input').value = lev;
+  document.querySelectorAll('.lev-btn').forEach(b => {
+    b.classList.toggle('active-lev', parseInt(b.dataset.lev) === lev);
+  });
+  recalcRisk();
+}
+
+function recalcRisk() {
+  const lev = currentLeverage;
+  const riskPct = parseFloat(document.getElementById('lev-risk-pct').value) || 1.5;
+  const slPct = parseFloat(document.getElementById('lev-sl-pct').value) || 1;
+  const rr = parseFloat(document.getElementById('lev-rr').value) || 2;
+
+  // Sync balance field with current state
+  const balField = document.getElementById('calc-bal2');
+  if (balField && document.activeElement !== balField) {
+    balField.value = state.balance.toFixed(2);
+  }
+  const bal = parseFloat(document.getElementById('calc-bal2').value) || state.balance;
+
+  // Core math:
+  // riskDollar = bal * riskPct/100  → макс. убыток
+  // margin (collateral) = riskDollar / (slPct/100 * lev)
+  //   because: loss = margin * lev * (slPct/100) = riskDollar
+  // positionVolume = margin * lev
+  const riskDollar = bal * riskPct / 100;
+  const margin = riskDollar / (lev * slPct / 100);
+  const positionVolume = margin * lev;
+  const liqPct = -(100 / lev);
+  const dailyLimit = bal * 0.05;
+  const maxTrades = Math.max(1, Math.floor(dailyLimit / riskDollar));
+  const tp = riskDollar * rr;
+  const tpPct = slPct * rr;
+
+  document.getElementById('r-dollar').textContent = '$' + riskDollar.toFixed(2);
+  document.getElementById('r-dollar-sub').textContent = riskPct.toFixed(1) + '% от баланса';
+
+  document.getElementById('r-margin').textContent = '$' + margin.toFixed(2);
+  document.getElementById('r-margin-sub').textContent = 'открыть позицию на ' + lev + 'x';
+
+  document.getElementById('r-position').textContent = '$' + positionVolume.toFixed(2);
+
+  document.getElementById('r-tp').textContent = '+$' + tp.toFixed(2);
+  document.getElementById('r-tp-sub').textContent = 'R:R 1:' + rr + '  (+' + tpPct.toFixed(2) + '% цены)';
+
+  document.getElementById('r-liq').textContent = liqPct.toFixed(2) + '%';
+
+  document.getElementById('r-daily').textContent = '$' + dailyLimit.toFixed(2);
+  document.getElementById('r-max-trades').textContent = 'макс. ' + maxTrades + ' сдел./день';
+
+  const warn = document.getElementById('lev-warning');
+  const liqAbs = (100/lev).toFixed(1);
+  if (lev >= 75) {
+    warn.textContent = '⚠️ ' + lev + 'x — ликвидация при движении ' + liqAbs + '% от входа. SL обязателен каждый вход!';
+  } else if (lev >= 50) {
+    warn.textContent = '⚠️ ' + lev + 'x — высокий риск. Ликвидация при ' + liqAbs + '% от входа.';
+  } else {
+    warn.textContent = '';
+  }
+}
+
+// ═══════════════════════ INIT ═══════════════════════
+initDates();
+updateStats();
+drawChart();
+recalcRisk();
+window.addEventListener('resize', drawChart);
+</script>
+
+</body>
+</html>
